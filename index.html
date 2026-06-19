@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trigger Trim</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Gamepad API / calibration profile</p>
+          <h1>Trigger Trim</h1>
+        </div>
+        <div class="status-rack" aria-label="状态">
+          <span class="status-pill" id="apiStatus">检测 API</span>
+          <span class="status-pill" id="secureStatus">Pages ready</span>
+          <span class="status-pill status-warn" title="浏览器只能预览映射，系统级生效需要本地 companion。">预览模式</span>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="panel device-panel" aria-label="手柄列表">
+          <div class="panel-header">
+            <div>
+              <p class="section-kicker">Devices</p>
+              <h2>手柄</h2>
+            </div>
+            <button class="small-btn" id="refreshBtn" type="button" title="重新读取浏览器可见手柄">刷新</button>
+          </div>
+          <div class="device-list" id="deviceList"></div>
+          <div class="quiet-box" id="connectHint">按任意手柄按钮后，浏览器通常才会暴露设备。</div>
+        </aside>
+
+        <section class="panel calibration-panel" aria-label="扳机校准">
+          <div class="selected-header">
+            <div>
+              <p class="section-kicker">Selected</p>
+              <h2 id="selectedName">未选择手柄</h2>
+            </div>
+            <div class="selected-meta" id="selectedMeta">等待输入</div>
+          </div>
+
+          <div class="trigger-grid">
+            <article class="trigger-strip" data-trigger="lt">
+              <div class="trigger-title-row">
+                <div>
+                  <p class="section-kicker">Left Trigger</p>
+                  <h3>LT</h3>
+                </div>
+                <select class="source-select" data-trigger="lt" title="选择 LT 的输入来源">
+                  <option value="button:6">按钮 6 · LT</option>
+                </select>
+              </div>
+
+              <div class="meter-block">
+                <div class="meter-label">
+                  <span>Raw</span>
+                  <strong id="ltRawText">0 / 32767</strong>
+                </div>
+                <div class="meter raw-meter" aria-hidden="true"><span id="ltRawFill"></span></div>
+              </div>
+
+              <div class="meter-block">
+                <div class="meter-label">
+                  <span>Mapped</span>
+                  <strong id="ltMappedText">0 / 32767</strong>
+                </div>
+                <div class="meter mapped-meter" aria-hidden="true"><span id="ltMappedFill"></span></div>
+              </div>
+
+              <div class="control-grid">
+                <label>
+                  <span>最小值</span>
+                  <input type="range" min="0" max="0.3" step="0.001" data-trigger="lt" data-prop="min" />
+                </label>
+                <input class="number-input" type="number" min="0" max="32767" step="1" data-trigger="lt" data-prop="minInt" />
+                <label>
+                  <span>舒适满值</span>
+                  <input type="range" min="0.35" max="1" step="0.001" data-trigger="lt" data-prop="max" />
+                </label>
+                <input class="number-input" type="number" min="1" max="32767" step="1" data-trigger="lt" data-prop="maxInt" />
+                <label>
+                  <span>曲线</span>
+                  <input type="range" min="0.5" max="2.5" step="0.01" data-trigger="lt" data-prop="curve" />
+                </label>
+                <input class="number-input" type="number" min="0.5" max="2.5" step="0.01" data-trigger="lt" data-prop="curveNum" />
+              </div>
+
+              <div class="button-row">
+                <button type="button" data-action="set-min" data-trigger="lt">当前为最小</button>
+                <button type="button" data-action="set-max" data-trigger="lt">当前为满值</button>
+                <button type="button" data-action="capture-max" data-trigger="lt">采样满按</button>
+                <button type="button" data-action="reset" data-trigger="lt">重置</button>
+              </div>
+
+              <div class="mini-readout" id="ltReadout">舒适满值 32767 · 100.0%</div>
+            </article>
+
+            <article class="trigger-strip" data-trigger="rt">
+              <div class="trigger-title-row">
+                <div>
+                  <p class="section-kicker">Right Trigger</p>
+                  <h3>RT</h3>
+                </div>
+                <select class="source-select" data-trigger="rt" title="选择 RT 的输入来源">
+                  <option value="button:7">按钮 7 · RT</option>
+                </select>
+              </div>
+
+              <div class="meter-block">
+                <div class="meter-label">
+                  <span>Raw</span>
+                  <strong id="rtRawText">0 / 32767</strong>
+                </div>
+                <div class="meter raw-meter" aria-hidden="true"><span id="rtRawFill"></span></div>
+              </div>
+
+              <div class="meter-block">
+                <div class="meter-label">
+                  <span>Mapped</span>
+                  <strong id="rtMappedText">0 / 32767</strong>
+                </div>
+                <div class="meter mapped-meter" aria-hidden="true"><span id="rtMappedFill"></span></div>
+              </div>
+
+              <div class="control-grid">
+                <label>
+                  <span>最小值</span>
+                  <input type="range" min="0" max="0.3" step="0.001" data-trigger="rt" data-prop="min" />
+                </label>
+                <input class="number-input" type="number" min="0" max="32767" step="1" data-trigger="rt" data-prop="minInt" />
+                <label>
+                  <span>舒适满值</span>
+                  <input type="range" min="0.35" max="1" step="0.001" data-trigger="rt" data-prop="max" />
+                </label>
+                <input class="number-input" type="number" min="1" max="32767" step="1" data-trigger="rt" data-prop="maxInt" />
+                <label>
+                  <span>曲线</span>
+                  <input type="range" min="0.5" max="2.5" step="0.01" data-trigger="rt" data-prop="curve" />
+                </label>
+                <input class="number-input" type="number" min="0.5" max="2.5" step="0.01" data-trigger="rt" data-prop="curveNum" />
+              </div>
+
+              <div class="button-row">
+                <button type="button" data-action="set-min" data-trigger="rt">当前为最小</button>
+                <button type="button" data-action="set-max" data-trigger="rt">当前为满值</button>
+                <button type="button" data-action="capture-max" data-trigger="rt">采样满按</button>
+                <button type="button" data-action="reset" data-trigger="rt">重置</button>
+              </div>
+
+              <div class="mini-readout" id="rtReadout">舒适满值 32767 · 100.0%</div>
+            </article>
+          </div>
+
+          <div class="curve-panel">
+            <div>
+              <p class="section-kicker">Curve</p>
+              <h2>映射曲线</h2>
+            </div>
+            <canvas id="curveCanvas" width="760" height="260"></canvas>
+          </div>
+        </section>
+
+        <aside class="panel telemetry-panel" aria-label="遥测和导出">
+          <div class="panel-header">
+            <div>
+              <p class="section-kicker">Telemetry</p>
+              <h2>实时值</h2>
+            </div>
+          </div>
+
+          <div class="telemetry-table" id="telemetryTable">
+            <div class="empty-telemetry">等待手柄输入</div>
+          </div>
+
+          <div class="actions-stack">
+            <button type="button" id="saveProfileBtn">保存本机 profile</button>
+            <button type="button" id="copyProfileBtn">复制 JSON</button>
+            <button type="button" id="downloadProfileBtn">下载 JSON</button>
+            <button type="button" id="importProfileBtn">导入 JSON</button>
+          </div>
+
+          <div class="quiet-box boundary-note">
+            系统级输出需要本地 companion。当前网页保存的是校准参数和预览结果。
+          </div>
+        </aside>
+      </main>
+
+      <footer class="footer-bar">
+        <span id="profileStatus">Profile 自动保存到当前浏览器。</span>
+        <span id="captureStatus"></span>
+      </footer>
+    </div>
+
+    <input id="importFile" type="file" accept="application/json,.json" hidden />
+    <script src="app.js"></script>
+  </body>
+</html>
